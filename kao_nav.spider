@@ -1,0 +1,65 @@
+use angular;
+use console;
+
+angular.module('kao.nav', ['ngRoute'])
+    .provider('NavConfig', fn() {
+        this.config = {};
+        this.routes = [];
+        this.add = fn(config) {
+            this.config[config.name] = config;
+            this.routes.push(config);
+        };
+        
+        this.$get = fn() {
+            return this;
+        };
+    })
+    .factory('NavRoute', fn($location) {
+        var NavRoute = fn(route) {
+            for attr, value of route {
+                this[attr] = value;
+            }
+            this.routeParams = this.getRouteParams();
+        };
+        NavRoute.prototype.goTo = fn(args...) {
+            return $location.path(this._getPathWithArgs(args));
+        };
+        NavRoute.prototype.getPathWithArgs = fn(args...) {
+            return this._getPathWithArgs(args);
+        };
+        NavRoute.prototype._getPathWithArgs = fn(args) {
+            var path = this.path;
+            for var i = 0; i < args.length; i++ {
+                path = path.replace(':'+this.routeParams[i], args[i]);
+            }
+            return path;
+        };
+        NavRoute.prototype.getRouteParams = fn() {
+            var params = [];
+            var pieces = this.path.split('/');
+            for piece in pieces {
+                if piece.startsWith(':') {
+                    params <- piece[1..];
+                }
+            }
+            return params;
+        };
+        
+        return NavRoute;
+    })
+    .factory('NavService', fn(NavConfig, NavRoute) {
+        var NavService = {
+            getConfigFor: fn(path) {
+                for route in NavConfig.routes {
+                    if (route.path == path) {
+                        return route;
+                    }
+                }
+                return undefined;
+            }};
+        for route in NavConfig.routes {
+            NavService[route.name] = new NavRoute(route);
+        }
+        
+        return NavService;
+    });
