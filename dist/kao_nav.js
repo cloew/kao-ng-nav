@@ -54,18 +54,9 @@ $traceurRuntime.ModuleStore.getAnonymousModule(function() {
       return params;
     };
     return NavRoute;
-  }).factory("NavService", function(NavConfig, NavRoute) {
-    var NavService = {getConfigFor: function(path) {
-        for (var $__0 = NavConfig.routes[$traceurRuntime.toProperty(Symbol.iterator)](),
-            $__1; !($__1 = $__0.next()).done; ) {
-          var route = $__1.value;
-          {
-            if (route.path === path) {
-              return route;
-            }
-          }
-        }
-        return void 0;
+  }).factory("NavService", function(NavConfig, NavRoute, $route) {
+    var NavService = {current: function() {
+        return this[$route.current.$$route.path];
       }};
     for (var $__0 = NavConfig.routes[$traceurRuntime.toProperty(Symbol.iterator)](),
         $__1; !($__1 = $__0.next()).done; ) {

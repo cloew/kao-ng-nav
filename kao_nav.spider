@@ -47,15 +47,10 @@ angular.module('kao.nav', ['ngRoute'])
         
         return NavRoute;
     })
-    .factory('NavService', fn(NavConfig, NavRoute) {
+    .factory('NavService', fn(NavConfig, NavRoute, $route) {
         var NavService = {
-            getConfigFor: fn(path) {
-                for route in NavConfig.routes {
-                    if (route.path == path) {
-                        return route;
-                    }
-                }
-                return undefined;
+            current: fn() {
+                return this[$route.current.$$route.path];
             }};
         for routeCfg in NavConfig.routes {
             var route = new NavRoute(routeCfg);
