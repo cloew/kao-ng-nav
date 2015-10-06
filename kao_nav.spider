@@ -57,9 +57,25 @@ angular.module('kao.nav', ['ngRoute'])
                 }
                 return undefined;
             }};
-        for route in NavConfig.routes {
-            NavService[route.name] = new NavRoute(route);
+        for routeCfg in NavConfig.routes {
+            var route = new NavRoute(routeCfg);
+            NavService[routeCfg.name] = route;
+            NavService[routeCfg.path] = route;
         }
         
         return NavService;
+    })
+    .run(fn($injector, $rootScope, NavService) {
+        $rootScope.$on('$routeChangeStart', fn(event, next, current) {
+            if next && next.$$route && next.$$route.originalPath {
+                var nav = NavService[next.$$route.originalPath];
+                if nav? {
+                    angular.forEach(nav.onLoad, fn(serviceName) {
+                        if (!event.defaultPrevented) {
+                            $injector.get(serviceName)(event);
+                        }
+                    });
+                }
+            }
+        });
     });

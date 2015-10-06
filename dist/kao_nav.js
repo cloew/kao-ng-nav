@@ -69,12 +69,27 @@ $traceurRuntime.ModuleStore.getAnonymousModule(function() {
       }};
     for (var $__0 = NavConfig.routes[$traceurRuntime.toProperty(Symbol.iterator)](),
         $__1; !($__1 = $__0.next()).done; ) {
-      var route = $__1.value;
+      var routeCfg = $__1.value;
       {
-        NavService[route.name] = new NavRoute(route);
+        var route = new NavRoute(routeCfg);
+        NavService[routeCfg.name] = route;
+        NavService[routeCfg.path] = route;
       }
     }
     return NavService;
+  }).run(function($injector, $rootScope, NavService) {
+    $rootScope.$on("$routeChangeStart", function(event, next, current) {
+      if (!!(!!next && !!next.$$route) && !!next.$$route.originalPath) {
+        var nav = NavService[next.$$route.originalPath];
+        if (typeof nav !== "undefined" && nav !== null) {
+          angular.forEach(nav.onLoad, function(serviceName) {
+            if (!event.defaultPrevented) {
+              $injector.get(serviceName)(event);
+            }
+          });
+        }
+      }
+    });
   });
   return {};
 });
