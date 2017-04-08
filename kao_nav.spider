@@ -24,6 +24,10 @@ angular.module('kao.nav', ['ngRoute'])
         NavRoute.prototype.goTo = fn(args...) {
             return $location.path(this._getPathWithArgs(args));
         };
+        NavRoute.prototype.asHref = fn(args...) {
+            var path = this._getPathWithArgs(args);
+            return "#"+path;
+        };
         NavRoute.prototype.getPathWithArgs = fn(args...) {
             return this._getPathWithArgs(args);
         };

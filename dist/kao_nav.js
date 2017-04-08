@@ -27,6 +27,12 @@ $traceurRuntime.ModuleStore.getAnonymousModule(function() {
           args = 1 <= arguments.length ? [].slice.call(arguments, 0) : [];
       return $location.path(this._getPathWithArgs(args));
     };
+    NavRoute.prototype.asHref = function() {
+      var __splat,
+          args = 1 <= arguments.length ? [].slice.call(arguments, 0) : [];
+      var path = this._getPathWithArgs(args);
+      return "#" + path;
+    };
     NavRoute.prototype.getPathWithArgs = function() {
       var __splat,
           args = 1 <= arguments.length ? [].slice.call(arguments, 0) : [];
